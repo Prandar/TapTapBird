@@ -29,7 +29,7 @@ public class playerController : MonoBehaviour
 	{
 		if (collision.collider.tag == "death")
 		{
-			gm.GameOver();
+			gm.GameOver(scoreManager.score);
 		}
 	}
 

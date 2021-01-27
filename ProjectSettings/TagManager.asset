@@ -7,6 +7,7 @@ TagManager:
   - addScoreHitBox
   - death
   - CloudHandler
+  - MainMenu
   layers:
   - Default
   - TransparentFX

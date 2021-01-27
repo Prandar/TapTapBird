@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CloudHandler : MonoBehaviour
 {
-	public MainMenu mainMenu;
+	private MainMenu mainMenu;
 
 	private Cloud Cloud;
 	private Gamer Gamer;
@@ -30,11 +30,15 @@ public class CloudHandler : MonoBehaviour
 		DontDestroyOnLoad(this.gameObject);
 	}
 
-	private void Start()
+	public void Init()
 	{
+		GameObject obj = GameObject.FindGameObjectWithTag("MainMenu");
+		mainMenu = obj.GetComponent<MainMenu>();
+
 		DisableAllCanvas();
 		//DebugClearPlayerPref(true);
 		DebugGamerData();
+
 
 		// Link with the CotC Game Object
 		var cb = FindObjectOfType<CotcGameObject>();
@@ -70,6 +74,11 @@ public class CloudHandler : MonoBehaviour
 		mainMenu.PwdInput.text = DefaultPassword;
 
 		VerificationGamerInPref();
+	}
+
+	private void Start()
+	{
+		Init();
 	}
 
 	private void Update()
@@ -139,27 +148,27 @@ public class CloudHandler : MonoBehaviour
 		VerificationGamerInPref();
 	}
 
-	public void DoLoginEmail(string id, string pwd)
-	{
-		Cloud.Login(
-			network: "email",
-			networkId: id,
-			networkSecret: pwd)
-		.Done(gamer =>
-		{
-			Debug.Log("Signed in succeeded (ID = " + gamer.GamerId + ")");
-			Debug.Log("Login data: " + gamer);
-			Debug.Log("Server time: " + gamer["servertime"]);
-			SaveGamerDataInPref(gamer.GamerId, gamer.GamerSecret, gamer.Network);
-		}, ex =>
-		{
-			// The exception should always be CotcException
-			CotcException error = (CotcException)ex;
-			Debug.LogError("Failed to login: " + error.ErrorCode + " (" + error.HttpStatusCode + ")");
-		});
+	//public void DoLoginEmail(string id, string pwd)
+	//{
+	//	Cloud.Login(
+	//		network: "email",
+	//		networkId: id,
+	//		networkSecret: pwd)
+	//	.Done(gamer =>
+	//	{
+	//		Debug.Log("Signed in succeeded (ID = " + gamer.GamerId + ")");
+	//		Debug.Log("Login data: " + gamer);
+	//		Debug.Log("Server time: " + gamer["servertime"]);
+	//		SaveGamerDataInPref(gamer.GamerId, gamer.GamerSecret, gamer.Network);
+	//	}, ex =>
+	//	{
+	//		// The exception should always be CotcException
+	//		CotcException error = (CotcException)ex;
+	//		Debug.LogError("Failed to login: " + error.ErrorCode + " (" + error.HttpStatusCode + ")");
+	//	});
 
 		//VerificationGamerInPref();
-	}
+	//}
 
 	public void LogOutOnClick()
 	{
@@ -268,6 +277,87 @@ public class CloudHandler : MonoBehaviour
 				);
 			});
 		});
+	}
+
+	public void PostScore(int actualScore)
+	{
+		var cotc = FindObjectOfType<CotcGameObject>();
+		gamerInPref = GetGamerDataInPref();
+		//DebugGamerData();
+
+		cotc.GetCloud().Done(cloud =>
+		{
+			Cloud.Login(
+				network: gamerInPref[2],
+				networkId: gamerInPref[0],
+				networkSecret: gamerInPref[1])
+			.Done(gamer =>
+			{
+				Debug.Log("reLogIn to postOnLeaderBoard");
+				Debug.Log("Signed in succeeded (ID = " + gamer.GamerId + ")");
+				Debug.Log("Login data: " + gamer);
+				Debug.Log("Server time: " + gamer["servertime"]);
+
+				gamer.Scores.Domain("private").Post(actualScore, "World", ScoreOrder.HighToLow,
+				"nocheat", false)
+				.Done(postScoreRes =>
+				{
+					Debug.Log("Post score: " + postScoreRes.ToString());
+				}, ex =>
+				{
+					// The exception should always be CotcException
+					CotcException error = (CotcException)ex;
+					Debug.LogError("Could not post score: " + error.ErrorCode + " (" + error.ErrorInformation + ")");
+				});
+			});
+		});
+	}
+
+	public int UserBestScores()
+	{
+		int value = -1;
+		var cotc = FindObjectOfType<CotcGameObject>();
+		gamerInPref = GetGamerDataInPref();
+		DebugGamerData();
+
+		cotc.GetCloud().Done(cloud =>
+		{
+			Cloud.Login(
+				network: gamerInPref[2],
+				networkId: gamerInPref[0],
+				networkSecret: gamerInPref[1])
+			.Done(gamer =>
+			{
+				Debug.Log("reLogIn to getPersonalLeaderBoard");
+				Debug.Log("Signed in succeeded (ID = " + gamer.GamerId + ")");
+				Debug.Log("Login data: " + gamer);
+				Debug.Log("Server time: " + gamer["servertime"]);
+
+				gamer.Scores.Domain("private").ListUserBestScores()
+				.Done(listUserBestScoresRes =>
+				{
+					foreach (var score in listUserBestScoresRes)
+					{
+						if (score.Key == "World")
+						{
+							value = Convert.ToInt32(score.Value.Value);
+							Debug.Log("Coucou " +value);
+							PlayerPrefs.SetInt("HighScore", value);
+
+						}
+						Debug.Log(score.Key + ": " + score.Value.Value);
+
+					}
+				}, ex =>
+				{
+					// The exception should always be CotcException
+					CotcException error = (CotcException)ex;
+					Debug.LogError("Could not get user best scores: " + error.ErrorCode + " (" + error.ErrorInformation + ")");
+				});
+			});
+		});
+
+		return PlayerPrefs.GetInt("HighScore");
 	}
 
 
@@ -400,17 +490,17 @@ public class CloudHandler : MonoBehaviour
 		return IsGamerDataExist();
 	}
 
-	public void VerificationMailConnection()
-	{
-		if (mainMenu.EmailInput.text != "" || mainMenu.PwdInput.text != "")
-		{
-			DoLoginEmail();
-		}
-		else
-		{
-			//nothing
-		}
-	}
+	//public void VerificationMailConnection()
+	//{
+	//	if (mainMenu.EmailInput.text != "" || mainMenu.PwdInput.text != "")
+	//	{
+	//		DoLoginEmail();
+	//	}
+	//	else
+	//	{
+	//
+	//	}
+	//}
 
 	#endregion Verification
 }

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
 	public bool isConnected = false;
-	public LogInController logInController;
+	//public LogInController logInController;
 
 	[Header("Input field")]
 	public TMP_InputField EmailInput;

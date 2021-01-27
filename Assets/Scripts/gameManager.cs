@@ -53,11 +53,11 @@ public class gameManager : MonoBehaviour
 		}
 	}
 
-	public void GameOver()
+	public void GameOver(int actualScore)
 	{
 		gameOverCanvas.SetActive(true);
 		Time.timeScale = 0;
-		ch.InvokeCreateKvStoreKeyUserBatch();
+		ch.PostScore(actualScore);
 	}
 
 	public void GoMenu()
@@ -84,6 +84,22 @@ public class gameManager : MonoBehaviour
 		scoreCanvas.SetActive(false);
 		gameOverCanvas.SetActive(false);
 		highScoreOffline.SetActive(true);
+	}
+	
+	public void ShowOnLineHighScore()
+	{
+		int newScore = scoreManager.score;
+		actualScore.text = newScore.ToString();
+
+		int bestPersonalScore = ch.UserBestScores();
+
+		highScore.text = bestPersonalScore.ToString();
+
+		scoreCanvas.SetActive(false);
+		gameOverCanvas.SetActive(false);
+		highScoreOffline.SetActive(true);
+
+
 	}
 
 	public void FromHSOfflineToGameOver()
