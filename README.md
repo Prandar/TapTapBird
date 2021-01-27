@@ -8,6 +8,6 @@ Log anonymously with grey Icon
 
 once logged you can change login by clicking on the grey icon in top left before launching the game.
 
-Knowed issues:
+Known issues:
   - clunky UI that can be unreadable depending on the resolution/ratio
   - The gamer High Score needs to be displayed twice to be actualised
