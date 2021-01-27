@@ -22,7 +22,7 @@ Once logged you can change login by clicking on the grey icon in top left before
 The further, the better !
 
 ## 4. LeaderBoard
-You can consult you ***personal highScore*** by clicking on the yellow leaderboard icon.
+You can consult you ***personal highScore*** by clicking on the ***yellow*** leaderboard icon.
 
 or
 
