@@ -12,6 +12,5 @@ once logged you can change login by clicking on the grey icon in top left before
 
 - - - - - - - - - - - - -
 Known issues:
-  - wrong login break
   - clunky UI that can be unreadable depending on the resolution/ratio
   - The gamer High Score needs to be displayed at least twice to be actualised
