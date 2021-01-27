@@ -5,7 +5,7 @@ A simple Flappy Bird clone in Unity 2019.4
 
 
 
-Log with mail with blue Icon (you can try login with: admin@gmail.com | abc4ABCD)
+Log with mail with blue Icon (you can try login with: default@gmail.com | abc4ABCD)
 Log anonymously with grey Icon
 
 once logged you can change login by clicking on the grey icon in top left before launching the game.
