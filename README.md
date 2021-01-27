@@ -6,13 +6,30 @@ A simple **Flappy Bird** clone in **Unity 2019.4**, using **xtralifecloud** a.k.
 
 # How to play ?
 
-Log with mail with blue Icon (you can try login with: default@gmail.com | abc4ABCD)
+## 1. LogIn
+Log with ***mail*** with **blue Icon** (you can try login with: *default@gmail.com* | *abc4ABCD*).
 
-    *or*
+*or*
 
-Log anonymously with grey Icon
+Log ***anonymously*** with **grey Icon**.
 
-once logged you can change login by clicking on the grey icon in top left before launching the game.
+## 2. Need to change account ?
+Once logged you can change login by clicking on the grey icon in top left before launching the game.
+
+## 3. Play the Game
+***Click*** with your mouse :computer_mouse: to make the bird fly, try to ***avoid the pipes*** .
+
+The further, the better !
+
+## 4. LeaderBoard
+You can consult you ***personal highScore*** by clicking on the yellow leaderboard icon.
+
+or
+
+You can consult the ***top 5 world highScore*** by clicking on the ***blue*** leaderboard icon.
+
+## 5. ...
+XOXOXOXOXOXOX XOXOXOXO XOXO XOXOXOXO
 
 - - - - - - - - - - - - -
 Known issues:
