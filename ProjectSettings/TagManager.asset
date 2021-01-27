@@ -6,6 +6,7 @@ TagManager:
   tags:
   - addScoreHitBox
   - death
+  - CloudHandler
   layers:
   - Default
   - TransparentFX

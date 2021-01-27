@@ -20,8 +20,9 @@ public class gameManager : MonoBehaviour
 
 	[Header("Controller")]
 	public playerController player;
+	private CloudHandler ch;
 
-	private bool ipPlaying;
+	private bool isPlaying;
 
 	//[Header("Other Manager")]
 	//public scoreManager scoreManager;
@@ -34,14 +35,17 @@ public class gameManager : MonoBehaviour
 		scoreCanvas.SetActive(false);
 		highScoreOffline.SetActive(false);
 		gameOverCanvas.SetActive(false);
+
+		GameObject[] objs = GameObject.FindGameObjectsWithTag("CloudHandler");
+		ch = objs[0].GetComponent<CloudHandler>();
 	}
 
 	// Update is called once per frame
 	private void Update()
 	{
-		if (!ipPlaying && Input.GetMouseButtonDown(0))
+		if (!isPlaying && Input.GetMouseButtonDown(0))
 		{
-			ipPlaying = true;
+			isPlaying = true;
 			getReadyCanvas.SetActive(false);
 			scoreCanvas.SetActive(true);
 			Time.timeScale = 1;
@@ -53,6 +57,7 @@ public class gameManager : MonoBehaviour
 	{
 		gameOverCanvas.SetActive(true);
 		Time.timeScale = 0;
+		ch.InvokeCreateKvStoreKeyUserBatch();
 	}
 
 	public void GoMenu()
