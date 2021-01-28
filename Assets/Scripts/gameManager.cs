@@ -2,6 +2,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Handle Game Event and UI element in Game scene
+/// </summary>
 public class gameManager : MonoBehaviour
 {
 	[Header("Scene index")]
@@ -10,31 +13,32 @@ public class gameManager : MonoBehaviour
 	public int ShopScene = 2;
 
 	[Header("Canvas")]
-	public GameObject getReadyCanvas;
-
-	public GameObject scoreCanvas;
-	public GameObject gameOverCanvas;
 	public GameObject highScoreOffline;
+	public GameObject highScoreOnline;
+	public GameObject getReadyCanvas;
+	public GameObject gameOverCanvas;
+	public GameObject scoreCanvas;
 	public TextMeshProUGUI actualScore;
 	public TextMeshProUGUI highScore;
+	public GameObject scoreTxtParent;
+	public GameObject scoreTxt;
 
 	[Header("Controller")]
 	public playerController player;
-	private CloudHandler ch;
 
+	private CloudHandler ch;
 	private bool isPlaying;
 
-	//[Header("Other Manager")]
-	//public scoreManager scoreManager;
 
 	// Start is called before the first frame update
 	private void Start()
 	{
 		Time.timeScale = 0;
+		highScoreOffline.SetActive(false);
+		highScoreOnline.SetActive(false);
+		gameOverCanvas.SetActive(false);
 		getReadyCanvas.SetActive(true);
 		scoreCanvas.SetActive(false);
-		highScoreOffline.SetActive(false);
-		gameOverCanvas.SetActive(false);
 
 		GameObject[] objs = GameObject.FindGameObjectsWithTag("CloudHandler");
 		ch = objs[0].GetComponent<CloudHandler>();
@@ -75,36 +79,38 @@ public class gameManager : MonoBehaviour
 	{
 		int newScore = scoreManager.score;
 		actualScore.text = newScore.ToString();
-		if (newScore > 9)
-		{
-			//set new hs
-			PlayerPrefs.SetInt("highScore", scoreManager.score);
-		}
-		highScore.text = newScore.ToString();
+
+		int bestPersonalScore = ch.UserBestScores(highScore);
+
+		//highScore.text = bestPersonalScore.ToString();
+
 		scoreCanvas.SetActive(false);
 		gameOverCanvas.SetActive(false);
+		highScoreOnline.SetActive(false);
 		highScoreOffline.SetActive(true);
 	}
-	
+
 	public void ShowOnLineHighScore()
 	{
 		int newScore = scoreManager.score;
 		actualScore.text = newScore.ToString();
 
-		int bestPersonalScore = ch.UserBestScores();
+		ch.BestHighScores(scoreTxt, scoreTxtParent);
 
-		highScore.text = bestPersonalScore.ToString();
+		//highScore.text = bestPersonalScore.ToString();
 
 		scoreCanvas.SetActive(false);
 		gameOverCanvas.SetActive(false);
-		highScoreOffline.SetActive(true);
-
-
+		highScoreOnline.SetActive(true);
+		highScoreOffline.SetActive(false);
 	}
 
 	public void FromHSOfflineToGameOver()
 	{
+		scoreCanvas.SetActive(false);
 		gameOverCanvas.SetActive(true);
+		highScoreOnline.SetActive(false);
 		highScoreOffline.SetActive(false);
+
 	}
 }

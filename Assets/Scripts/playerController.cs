@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Handle the player jumps and player event
+/// </summary>
 public class playerController : MonoBehaviour
 {
 	public gameManager gm;

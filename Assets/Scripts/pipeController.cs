@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Move the pipes from right to left
+/// </summary>
 public class pipeController : MonoBehaviour
 {
 	public float speed;

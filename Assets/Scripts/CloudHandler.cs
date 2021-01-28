@@ -1,21 +1,20 @@
 ﻿using CotcSdk;
 using System;
+using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Handle Cotc connexion and exchange
+/// </summary>
 public class CloudHandler : MonoBehaviour
 {
+	private string[] gamerInPref;
+	private DomainEventLoop Loop;
 	private MainMenu mainMenu;
-
 	private Cloud Cloud;
 	private Gamer Gamer;
-	private string[] gamerInPref;
 
-	// When a gamer is logged in, the loop is launched for domain private. Only one is run at once.
-	private DomainEventLoop Loop;
-
-	// Default parameters
 	private const string DefaultEmailAddress = "admin@gmail.com";
-
 	private const string DefaultPassword = "admin";
 
 	private void Awake()
@@ -30,15 +29,22 @@ public class CloudHandler : MonoBehaviour
 		DontDestroyOnLoad(this.gameObject);
 	}
 
+	private void Start()
+	{
+		Init();
+	}
+
+	/// <summary>
+	/// initalise cotc connexion and reset canvas
+	/// </summary>
 	public void Init()
 	{
 		GameObject obj = GameObject.FindGameObjectWithTag("MainMenu");
 		mainMenu = obj.GetComponent<MainMenu>();
 
 		DisableAllCanvas();
-		//DebugClearPlayerPref(true);
+		DebugClearPlayerPref(true);
 		DebugGamerData();
-
 
 		// Link with the CotC Game Object
 		var cb = FindObjectOfType<CotcGameObject>();
@@ -76,18 +82,11 @@ public class CloudHandler : MonoBehaviour
 		VerificationGamerInPref();
 	}
 
-	private void Start()
-	{
-		Init();
-	}
-
-	private void Update()
-	{
-	}
-
 	#region cotc
 
-	// Signs in with an anonymous account
+	/// <summary>
+	/// Signs in with an anonymous account
+	/// </summary>
 	private void DoLogin()
 	{
 		var cotc = FindObjectOfType<CotcGameObject>();
@@ -111,6 +110,9 @@ public class CloudHandler : MonoBehaviour
 		});
 	}
 
+	/// <summary>
+	/// Call DoLogin and set canvas
+	/// </summary>
 	public void DoLoginOnClick()
 	{
 		DoLogin();
@@ -118,7 +120,9 @@ public class CloudHandler : MonoBehaviour
 		ShowLoggedIcon();
 	}
 
-	// Converts the account to e-mail
+	/// <summary>
+	/// Converts the anonymous account to e-mail
+	/// </summary>
 	public void DoConvertToEmail()
 	{
 		if (!RequireGamer()) return;
@@ -132,7 +136,9 @@ public class CloudHandler : MonoBehaviour
 		});
 	}
 
-	// Log in by e-mail
+	/// <summary>
+	/// Log in by e-mail with data in inputFields
+	/// </summary>
 	public void DoLoginEmail()
 	{
 		// You may also not provide a .Catch handler and use .Done instead of .Then. In that
@@ -167,9 +173,12 @@ public class CloudHandler : MonoBehaviour
 	//		Debug.LogError("Failed to login: " + error.ErrorCode + " (" + error.HttpStatusCode + ")");
 	//	});
 
-		//VerificationGamerInPref();
+	//VerificationGamerInPref();
 	//}
 
+	/// <summary>
+	/// Log out on click from the current account
+	/// </summary>
 	public void LogOutOnClick()
 	{
 		var cotc = FindObjectOfType<CotcGameObject>();
@@ -210,6 +219,9 @@ public class CloudHandler : MonoBehaviour
 		});
 	}
 
+	/// <summary>
+	/// Resume given Gamer session
+	/// </summary>
 	private void ResumeSession()
 	{
 		var cotc = FindObjectOfType<CotcGameObject>();
@@ -235,6 +247,9 @@ public class CloudHandler : MonoBehaviour
 		});
 	}
 
+	/// <summary>
+	/// Deprecated
+	/// </summary>
 	public void InvokeCreateKvStoreKeyUserBatch()
 	{
 		string adminID = DefaultEmailAddress;
@@ -279,6 +294,10 @@ public class CloudHandler : MonoBehaviour
 		});
 	}
 
+	/// <summary>
+	/// Post Score of the player in "World" leaderboard
+	/// </summary>
+	/// <param name="actualScore"></param>
 	public void PostScore(int actualScore)
 	{
 		var cotc = FindObjectOfType<CotcGameObject>();
@@ -313,7 +332,11 @@ public class CloudHandler : MonoBehaviour
 		});
 	}
 
-	public int UserBestScores()
+	/// <summary>
+	/// Return the best score stored in "World" leaderbord
+	/// </summary>
+	/// <returns>int HighScoreGamer</returns>
+	public int UserBestScores(TextMeshProUGUI bestScoreTXT)
 	{
 		int value = -1;
 		var cotc = FindObjectOfType<CotcGameObject>();
@@ -341,12 +364,11 @@ public class CloudHandler : MonoBehaviour
 						if (score.Key == "World")
 						{
 							value = Convert.ToInt32(score.Value.Value);
-							Debug.Log("Coucou " +value);
+							Debug.Log("Coucou " + value);
 							PlayerPrefs.SetInt("HighScore", value);
-
+							bestScoreTXT.text = value.ToString();
 						}
 						Debug.Log(score.Key + ": " + score.Value.Value);
-
 					}
 				}, ex =>
 				{
@@ -360,8 +382,54 @@ public class CloudHandler : MonoBehaviour
 		return PlayerPrefs.GetInt("HighScore");
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	public void BestHighScores(GameObject txtPrefab, GameObject parent)
+	{
+		var cotc = FindObjectOfType<CotcGameObject>();
+		gamerInPref = GetGamerDataInPref();
+		DebugGamerData();
 
-	// Invoked when any sign in operation has completed
+		cotc.GetCloud().Done(cloud =>
+		{
+			Cloud.Login(
+				network: gamerInPref[2],
+				networkId: gamerInPref[0],
+				networkSecret: gamerInPref[1])
+			.Done(gamer =>
+			{
+				Debug.Log("reLogIn to getWorldLeaderBoard");
+				Debug.Log("Signed in succeeded (ID = " + gamer.GamerId + ")");
+				Debug.Log("Login data: " + gamer);
+				Debug.Log("Server time: " + gamer["servertime"]);
+				gamer.Scores.Domain("private").BestHighScores("World", 10, 1)
+				.Done(bestHighScoresRes =>
+				{
+					foreach (var score in bestHighScoresRes)
+					{
+						Debug.Log(score.Rank + ". " + score.GamerInfo["profile"]["displayName"] + ": " + score.Value);
+						txtPrefab.GetComponent<TextMeshProUGUI>().text = score.Rank + "# " + score.GamerInfo["profile"]["displayName"] + "= " + score.Value;
+						GameObject obj = Instantiate(txtPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+						obj.transform.SetParent(parent.transform);
+						obj.transform.localPosition = new Vector3(0, 130 - (20 * score.Rank), 0);
+						obj.transform.localScale = new Vector3(1, 1, 1);
+						obj.GetComponent<TextMeshProUGUI>().rectTransform.sizeDelta = new Vector3(-20, 50, 1);
+					}
+				}, ex =>
+				{
+					// The exception should always be CotcException
+					CotcException error = (CotcException)ex;
+					Debug.LogError("Could not get best high scores: " + error.ErrorCode + " (" + error.ErrorInformation + ")");
+				});
+			});
+		});
+	}
+
+	/// <summary>
+	/// Invoked when any sign in operation has completed
+	/// </summary>
+	/// <param name="newGamer"></param>
 	private void DidLogin(Gamer newGamer)
 	{
 		if (Gamer != null)
@@ -375,11 +443,20 @@ public class CloudHandler : MonoBehaviour
 		Debug.Log("Signed in successfully (ID = " + Gamer.GamerId + ")");
 	}
 
+	/// <summary>
+	/// Loop
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
 	private void Loop_ReceivedEvent(DomainEventLoop sender, EventLoopArgs e)
 	{
 		Debug.Log("Received event of type " + e.Message.Type + ": " + e.Message.ToJson());
 	}
 
+	/// <summary>
+	/// Is Gamer Defined
+	/// </summary>
+	/// <returns></returns>
 	private bool RequireGamer()
 	{
 		if (Gamer == null)
@@ -479,7 +556,6 @@ public class CloudHandler : MonoBehaviour
 	{
 		if (IsGamerDataExist())
 		{
-			//DoLoginEmail(GetGamerDataInPref()[0], GetGamerDataInPref()[1]);
 			ShowMainMenuCanvas();
 			ShowLoggedIcon();
 		}
@@ -489,18 +565,6 @@ public class CloudHandler : MonoBehaviour
 		}
 		return IsGamerDataExist();
 	}
-
-	//public void VerificationMailConnection()
-	//{
-	//	if (mainMenu.EmailInput.text != "" || mainMenu.PwdInput.text != "")
-	//	{
-	//		DoLoginEmail();
-	//	}
-	//	else
-	//	{
-	//
-	//	}
-	//}
 
 	#endregion Verification
 }
