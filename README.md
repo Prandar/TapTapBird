@@ -1,7 +1,7 @@
 # TapTapBird
 A simple **Flappy Bird** clone in **Unity 2019.4**, using **xtralifecloud** a.k.a. *children of the cloud*.
 
-![alt text](https://github.com/Prandar/TapTapBird/blob/main/Assets/Animations/TapTapBird.gif)
+![alt text](https://github.com/Prandar/TapTapBird/blob/main/Assets/Animations/TapTapBird2.gif)
 
 
 # How to play ?
