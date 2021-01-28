@@ -13,7 +13,7 @@ Log with ***mail*** with **blue Icon** :pouting_man: (you can try login with: *d
 
 Log ***anonymously*** with **grey Icon** :pouting_man:.
 
-    note that if you already had log once before, the game remenber you and skip this step.
+    note that if you already had log once before, the game remember you and skip this step.
 
 ## 2. Need to change account ?
 Once logged you can change login by clicking on the grey icon :pouting_man: in top left before launching the game.
