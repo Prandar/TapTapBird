@@ -26,7 +26,7 @@ You can consult you ***personal highScore*** by clicking on the ***yellow*** lea
 
 or
 
-You can consult the ***top 5 world highScore*** by clicking on the ***blue*** leaderboard icon.
+You can consult the ***top 10 world highScore*** by clicking on the ***blue*** leaderboard icon.
 
 ## 5. ...
 XOXOXOXOXOXOX XOXOXOXO XOXO XOXOXOXO
@@ -34,4 +34,3 @@ XOXOXOXOXOXOX XOXOXOXO XOXO XOXOXOXO
 - - - - - - - - - - - - -
 Known issues:
   - clunky UI that can be unreadable depending on the resolution/ratio
-  - The gamer High Score needs to be displayed at least twice to be actualised
